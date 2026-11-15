@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fleet Management | Veltrix Car Rental Management System</title>
+  <meta name="description" content="Manage the Veltrix rental fleet: Perodua and Proton vehicles by category, daily rates, status, road tax and insurance dates.">
+  <meta name="keywords" content="fleet management, Perodua Axia, Myvi, Bezza, Alza, Ativa, Proton Saga, Persona, X50, X70, car rental Malaysia">
+  <meta name="author" content="Veltrix">
+  <meta name="theme-color" content="#13744a">
+  <meta property="og:title" content="Fleet Management — Veltrix">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("vx_theme") || "light");</script>
+</head>
+<body data-page="vehicles.html" data-title="Fleet Management">
+  <aside id="sidebar"></aside>
+  <div class="main">
+    <header id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1>Fleet Management</h1><p>Perodua and Proton vehicles across five rental categories.</p></div>
+        <div class="actions">
+          <a class="btn" href="photo-to-svg.html"><i class="bi bi-image"></i> Photo to SVG</a>
+          <button class="btn" id="exportBtn"><i class="bi bi-download"></i> Export CSV</button>
+          <button class="btn btn-primary" id="addBtn"><i class="bi bi-plus-lg"></i> Add vehicle</button>
+        </div>
+      </div>
+
+      <section class="grid grid-4" id="summary" aria-label="Fleet summary"></section>
+
+      <section class="card mt-16">
+        <div class="card-body">
+          <div class="toolbar">
+            <div class="input-icon search"><i class="bi bi-search"></i><input class="form-control" id="search" placeholder="Search model, plate or colour" aria-label="Search vehicles"></div>
+            <select class="form-control" id="fCategory" aria-label="Filter by category"><option value="">All categories</option></select>
+            <select class="form-control" id="fBrand" aria-label="Filter by brand"><option value="">All brands</option><option>Perodua</option><option>Proton</option></select>
+            <select class="form-control" id="fStatus" aria-label="Filter by status"><option value="">All statuses</option><option>Available</option><option>Rented</option><option>Maintenance</option></select>
+            <div class="segmented" role="group" aria-label="Change view" style="margin-left:auto">
+              <button class="active" data-view="grid"><i class="bi bi-grid-3x2-gap"></i> Cards</button>
+              <button data-view="table"><i class="bi bi-list-ul"></i> Table</button>
+            </div>
+          </div>
+          <p class="small muted mb-16" id="resultCount"></p>
+          <div id="gridView" class="vehicle-grid"></div>
+          <div id="tableView" class="table-wrap hidden">
+            <table class="table">
+              <thead><tr><th>Vehicle</th><th>Plate</th><th>Category</th><th>Branch</th><th class="num">Mileage</th><th>Road tax</th><th>Insurance</th><th class="num">Daily rate</th><th>Status</th><th></th></tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card mt-16">
+        <div class="card-head"><div><h2>Category rate card</h2><p>Models offered in each category and the current daily rate range</p></div></div>
+        <div class="card-body" style="padding-top:12px">
+          <div class="table-wrap"><table class="table"><thead><tr><th>Category</th><th>Models</th><th class="num">Units</th><th class="num">Daily rate</th><th class="num">Available now</th></tr></thead><tbody id="rateBody"></tbody></table></div>
+        </div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+
+  <!-- Add / edit vehicle -->
+  <div class="modal-backdrop" id="vehicleModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vmTitle">
+      <div class="modal-head"><div><h2 id="vmTitle">Add vehicle</h2><p>Model list follows the Veltrix category plan.</p></div><button class="icon-btn" data-close="vehicleModal" aria-label="Close"><i class="bi bi-x-lg"></i></button></div>
+      <form id="vehicleForm" novalidate>
+        <div class="modal-body">
+          <div id="vmAlert" class="alert alert-error hidden mb-16"></div>
+          <div class="form-grid">
+            <div class="form-group"><label for="vCategory">Category <span class="req">*</span></label><select id="vCategory" class="form-control"></select><span class="field-error"></span></div>
+            <div class="form-group"><label for="vModel">Model <span class="req">*</span></label><select id="vModel" class="form-control"></select><span class="hint" id="vBrandHint"></span><span class="field-error"></span></div>
+            <div class="form-group"><label for="vVariant">Variant <span class="req">*</span></label><input id="vVariant" class="form-control" placeholder="e.g. 1.5 AV"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vPlate">Plate number <span class="req">*</span></label><input id="vPlate" class="form-control" placeholder="e.g. HWA 1234" style="text-transform:uppercase"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vYear">Year <span class="req">*</span></label><input id="vYear" type="number" class="form-control" min="2010"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vColorName">Colour <span class="req">*</span></label><div style="display:flex;gap:8px"><input id="vColorName" class="form-control" placeholder="e.g. Ivory White"><input id="vColor" type="color" class="form-control" style="width:52px;padding:4px" value="#f1f1ee" aria-label="Colour swatch"></div><span class="field-error"></span></div>
+            <div class="form-group"><label for="vRate">Daily rate (RM) <span class="req">*</span></label><input id="vRate" type="number" step="5" class="form-control"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vMileage">Mileage (km) <span class="req">*</span></label><input id="vMileage" type="number" class="form-control"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vBranch">Branch</label><select id="vBranch" class="form-control"></select></div>
+            <div class="form-group"><label for="vStatus">Status</label><select id="vStatus" class="form-control"><option>Available</option><option>Maintenance</option><option>Rented</option></select><span class="field-error"></span></div>
+            <div class="form-group"><label for="vTax">Road tax expiry <span class="req">*</span></label><input id="vTax" type="date" class="form-control"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vIns">Insurance expiry <span class="req">*</span></label><input id="vIns" type="date" class="form-control"><span class="field-error"></span></div>
+            <div class="form-group"><label for="vPusp">Next PUSPAKOM inspection</label><input id="vPusp" type="date" class="form-control"></div>
+            <div class="form-group"><label for="vSeats">Seats</label><input id="vSeats" type="number" class="form-control" readonly></div>
+            <div class="form-group full">
+              <span class="label">Vehicle photo <span class="muted small">(optional · saved as SVG, max 5 MB)</span></span>
+              <div class="photo-field">
+                <div class="preview" id="vPhotoPreview"></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <label class="btn btn-sm" for="vPhoto"><i class="bi bi-image"></i> Upload photo</label>
+                  <input type="file" id="vPhoto" accept="image/*" class="sr-only">
+                  <button type="button" class="btn btn-sm btn-ghost" id="vPhotoRemove">Remove</button>
+                </div>
+              </div>
+              <span class="hint">Without a photo, Veltrix uses <code>assets/img/cars/photos/&lt;model&gt;.svg</code> if it exists, otherwise a drawn SVG in the car's colour.</span>
+              <span class="field-error" id="vPhotoErr"></span>
+            </div>
+            <div class="form-group full"><label for="vNotes">Notes</label><textarea id="vNotes" class="form-control" placeholder="Service history, accessories, etc."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-foot"><button type="button" class="btn" data-close="vehicleModal">Cancel</button><button type="submit" class="btn btn-primary" id="vmSave">Save vehicle</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Vehicle detail -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal lg" role="dialog" aria-modal="true" aria-labelledby="dmTitle">
+      <div class="modal-head"><div><h2 id="dmTitle">Vehicle</h2><p id="dmSub"></p></div><button class="icon-btn" data-close="detailModal" aria-label="Close"><i class="bi bi-x-lg"></i></button></div>
+      <div class="modal-body" id="dmBody"></div>
+      <div class="modal-foot" id="dmFoot"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cars.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/vehicles.js"></script>
+</body>
+</html>

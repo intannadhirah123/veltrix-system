@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guides &amp; Regulations | Veltrix Car Rental Management System</title>
+  <meta name="description" content="Learn about vehicle rental regulations, safety practices and responsible fleet management in Malaysia, with references to JPJ, PUSPAKOM and APAD.">
+  <meta name="keywords" content="car rental regulations Malaysia, JPJ, PUSPAKOM, APAD, road tax, vehicle insurance, child seat, fleet safety">
+  <meta name="author" content="Veltrix">
+  <meta name="theme-color" content="#13744a">
+  <meta property="og:title" content="Guides & Regulations — Veltrix">
+  <meta property="og:type" content="article">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("vx_theme") || "light");</script>
+</head>
+<body data-page="guides.html" data-title="Guides & Regulations">
+  <aside id="sidebar"></aside>
+  <div class="main">
+    <header id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1>Guides &amp; Regulations</h1><p>Learn about vehicle rental regulations, safety practices and responsible fleet management in Malaysia.</p></div>
+      </div>
+
+      <section class="card mb-16">
+        <div class="card-body" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+          <div class="input-icon search" style="flex:1 1 260px;max-width:380px"><i class="bi bi-search"></i><input class="form-control" id="search" placeholder="Search guides" aria-label="Search guides"></div>
+          <div class="segmented" id="tagFilter" role="group" aria-label="Filter by topic">
+            <button class="active" data-tag="">All</button>
+            <button data-tag="Regulation">Regulation</button>
+            <button data-tag="Safety">Safety</button>
+            <button data-tag="Fleet">Fleet</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="guide-grid" id="guideGrid" aria-live="polite"></section>
+
+      <div class="alert alert-warn mt-24 small"><i class="bi bi-info-circle"></i><div>These guides summarise public information for staff awareness and are not legal advice. Requirements can change — always confirm with the agency concerned before making a business decision.</div></div>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+
+  <div class="modal-backdrop" id="articleModal">
+    <div class="modal lg print-area" role="dialog" aria-modal="true" aria-labelledby="arTitle">
+      <div class="modal-head no-print"><span class="tag" id="arTag"></span><div class="actions"><button class="btn btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print</button><button class="icon-btn" data-close="articleModal" aria-label="Close"><i class="bi bi-x-lg"></i></button></div></div>
+      <article class="modal-body article" id="arBody"></article>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/cars.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/guides.js"></script>
+</body>
+</html>

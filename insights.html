@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Business Insights | Veltrix Car Rental Management System</title>
+  <meta name="description" content="Veltrix business insights: revenue trends, Perodua vs Proton comparison, category performance, utilisation and automatic business highlights.">
+  <meta name="keywords" content="car rental analytics, revenue report, fleet utilisation, Perodua vs Proton, business insights">
+  <meta name="author" content="Veltrix">
+  <meta name="theme-color" content="#13744a">
+  <meta property="og:title" content="Business Insights — Veltrix">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("vx_theme") || "light");</script>
+</head>
+<body data-page="insights.html" data-title="Business Insights" class="print-page">
+  <aside id="sidebar"></aside>
+  <div class="main">
+    <header id="topbar"></header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1>Business Insights</h1><p id="periodText">Performance calculated from saved bookings, payments and vehicle records.</p></div>
+        <div class="actions no-print">
+          <button class="btn" id="exportBtn"><i class="bi bi-filetype-csv"></i> Export CSV</button>
+          <button class="btn" id="printBtn"><i class="bi bi-printer"></i> Print report</button>
+        </div>
+      </div>
+
+      <section class="card no-print">
+        <div class="filter-bar">
+          <div class="form-group"><label for="dFrom">From</label><input type="date" id="dFrom" class="form-control"></div>
+          <div class="form-group"><label for="dTo">To</label><input type="date" id="dTo" class="form-control"></div>
+          <div class="form-group"><span class="label">Quick range</span>
+            <div class="segmented" id="presets" role="group" aria-label="Quick date range">
+              <button data-days="30">30 days</button><button data-days="90">90 days</button><button data-days="180" class="active">6 months</button><button data-days="365">12 months</button>
+            </div>
+          </div>
+          <div class="form-group"><label for="fBrand">Brand</label><select id="fBrand" class="form-control"><option value="">Perodua &amp; Proton</option><option>Perodua</option><option>Proton</option></select></div>
+          <span class="field-error" id="rangeErr" style="flex-basis:100%"></span>
+        </div>
+      </section>
+
+      <section class="grid grid-3 mt-16" id="kpis"></section>
+
+      <section class="grid grid-main mt-16">
+        <div class="card">
+          <div class="card-head"><div><h2>Revenue trend</h2><p>Monthly revenue and bookings · click a point to see that month's bookings</p></div></div>
+          <div class="card-body"><div class="chart-box lg"><canvas id="trendChart" role="img" aria-label="Monthly revenue trend"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Business highlights</h2><p>Generated automatically from the selected period</p></div></div>
+          <div class="card-body"><div class="highlight-list" id="highlights"></div></div>
+        </div>
+      </section>
+
+      <section class="grid grid-3 mt-16">
+        <div class="card">
+          <div class="card-head"><div><h2>Perodua vs Proton</h2><p>Revenue and bookings by brand</p></div></div>
+          <div class="card-body"><div class="chart-box"><canvas id="brandChart" role="img" aria-label="Brand comparison"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Revenue by category</h2><p>Share of rental revenue</p></div></div>
+          <div class="card-body"><div class="chart-box"><canvas id="categoryChart" role="img" aria-label="Revenue by category"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Pickups by weekday</h2><p>When customers collect their cars</p></div></div>
+          <div class="card-body"><div class="chart-box"><canvas id="weekdayChart" role="img" aria-label="Pickups by weekday"></canvas></div></div>
+        </div>
+      </section>
+
+      <section class="grid grid-2 mt-16">
+        <div class="card">
+          <div class="card-head"><div><h2>Vehicle utilisation</h2><p>Share of days each vehicle was on rent in the period</p></div></div>
+          <div class="card-body"><div class="chart-box lg"><canvas id="utilChart" role="img" aria-label="Vehicle utilisation"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h2>Customer mix</h2><p>Revenue by customer type and booking status</p></div></div>
+          <div class="card-body"><div class="grid grid-2" style="gap:8px"><div class="chart-box"><canvas id="custChart" role="img" aria-label="Revenue by customer type"></canvas></div><div class="chart-box"><canvas id="statusChart" role="img" aria-label="Bookings by status"></canvas></div></div></div>
+        </div>
+      </section>
+
+      <section class="card mt-16" id="drillCard">
+        <div class="card-head">
+          <div><h2>Related records</h2><p>Click any chart section above to explore the bookings behind it</p></div>
+          <span id="drillLabel"></span>
+        </div>
+        <div class="card-body" style="padding:12px 0 0">
+          <div class="table-wrap"><table class="table"><thead><tr><th>Booking</th><th>Customer</th><th>Vehicle</th><th>Category</th><th>Pickup</th><th class="num">Days</th><th>Status</th><th class="num">Total</th></tr></thead><tbody id="drillBody"></tbody></table></div>
+        </div>
+        <div class="card-foot muted" id="drillFoot"></div>
+      </section>
+    </main>
+    <footer id="footer"></footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cars.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/insights.js"></script>
+</body>
+</html>
